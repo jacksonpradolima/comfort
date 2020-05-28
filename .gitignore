@@ -135,3 +135,4 @@ maven-status/
 pit-reports/
 surefire-reports/
 src/main/java/de/ugoe/cs/comfort/TestBed.java
+/.nb-gradle/
