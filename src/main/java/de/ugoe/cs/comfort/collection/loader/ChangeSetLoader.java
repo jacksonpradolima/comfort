@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2017 University of Goettingen, Germany
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -45,7 +45,6 @@ import org.mongodb.morphia.Morphia;
 import org.mongodb.morphia.logging.MorphiaLoggerFactory;
 import org.mongodb.morphia.query.Query;
 
-
 /**
  * @author Fabian Trautsch
  */
@@ -59,7 +58,7 @@ public class ChangeSetLoader extends BaseLoader {
 
     @SupportsJava
     @SupportsPython
-    public ChangeSet loadData() throws LoaderException{
+    public ChangeSet loadData() throws LoaderException {
         // Set up log4j logging
         MorphiaLoggerFactory.reset();
         MorphiaLoggerFactory.registerLogger(Log4JLoggerImplFactory.class);
@@ -83,9 +82,6 @@ public class ChangeSetLoader extends BaseLoader {
         final Datastore datastore = morphia.createDatastore(mongoClient, databaseConfiguration.getDatabase());
         datastore.ensureIndexes();
 
-
-
-
         // Get project files first, so that we already have a separation of the files
         ProjectFiles projectFiles;
         if (generalConf.getLanguage().equals("python")) {
@@ -104,7 +100,7 @@ public class ChangeSetLoader extends BaseLoader {
                 .field("path").in(projectFiles.getCodeFilesWithoutProjectDirAsString())
                 .field("vcs_system_id").equal(vcsSystem.getId())
                 .project("id", true).project("path", true)
-            .forEach(file -> fileIds.put(file.getId(), Paths.get(file.getPath())));
+                .forEach(file -> fileIds.put(file.getId(), Paths.get(file.getPath())));
         logger.debug("Found the following code files in the database: {}", fileIds);
 
         // Get only test files from database that belong to the project
@@ -113,10 +109,8 @@ public class ChangeSetLoader extends BaseLoader {
                 .field("path").in(projectFiles.getTestFilesWithoutProjectDirAsString())
                 .field("vcs_system_id").equal(vcsSystem.getId())
                 .project("id", true)
-            .forEach(file -> testFileIds.add(file.getId()));
+                .forEach(file -> testFileIds.add(file.getId()));
         logger.debug("Found the following test file ids in the database: {}", testFileIds);
-
-
 
         // For each file, get the fileactions that touched these files (with aggregation it is faster)
         Query<FileAction> q = datastore.createQuery(FileAction.class).field("file_id").in(testFileIds);
@@ -125,16 +119,15 @@ public class ChangeSetLoader extends BaseLoader {
                 .group("file_id", grouping("commit_ids", push("commit_id")))
                 .aggregate(FileAggregation.class);
 
-
         Map<Path, Multiset<Path>> changeMap = new HashMap<>();
         while (aggregate.hasNext()) {
             FileAggregation fA = aggregate.next();
             Multiset<Path> changedTogetherWith = HashMultiset.create();
 
-            for(ObjectId commitId : fA.getCommitIds()) {
+            for (ObjectId commitId : fA.getCommitIds()) {
                 datastore.createQuery(FileAction.class).field("commit_id").equal(commitId)
                         .project("file_id", true).forEach(
-                            fileAction -> changedTogetherWith.add(fileIds.get(fileAction.getFileId()))
+                                fileAction -> changedTogetherWith.add(fileIds.get(fileAction.getFileId()))
                 );
             }
 

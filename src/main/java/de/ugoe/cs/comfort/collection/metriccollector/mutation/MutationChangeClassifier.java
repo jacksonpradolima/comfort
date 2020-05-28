@@ -16,7 +16,7 @@
 
 package de.ugoe.cs.comfort.collection.metriccollector.mutation;
 
-import de.ugoe.cs.BugFixClassifier;
+//import de.ugoe.cs.BugFixClassifier;
 import de.ugoe.cs.comfort.collection.metriccollector.mutation.operators.BaseOperator;
 import de.ugoe.cs.comfort.collection.metriccollector.mutation.operators.ConditionalsBoundaryOperator;
 import de.ugoe.cs.comfort.collection.metriccollector.mutation.operators.IncrementsOperator;
@@ -133,7 +133,8 @@ public class MutationChangeClassifier {
                 op.changeFile();
 
                 // Call bugfixclassifier to get results
-                results = BugFixClassifier.getBugClassifications(file, changedFile);
+//                results = BugFixClassifier.getBugClassifications(file, changedFile);
+                throw new MutationOperatorNotFittingException("Not implemented.");
             } catch (MutationOperatorNotFittingException e) {
                 logger.debug("Got error: {}. Falling back to backup method...", e.getMessage());
             } finally {
