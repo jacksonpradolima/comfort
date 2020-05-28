@@ -180,7 +180,7 @@ gradle check
 ### Build
 You can build the project by calling
 ```bash
-gradle shadowJar
+gradle shadowJar -x test
 ```
 
 ### Use
